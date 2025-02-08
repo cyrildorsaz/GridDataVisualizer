@@ -45,14 +45,14 @@ with col1:
         "Start Date",
         datetime.now().date(),
         min_value=datetime.now().date() - timedelta(days=365),
-        max_value=datetime.now().date() + timedelta(days=365)
+        max_value=datetime.now().date()
     )
 with col2:
     end_date = st.date_input(
         "End Date",
         datetime.now().date(),
         min_value=start_date,
-        max_value=datetime.now().date() + timedelta(days=365)
+        max_value=datetime.now().date()
     )
 
 def fetch_and_display_data():
