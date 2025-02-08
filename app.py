@@ -25,6 +25,17 @@ st.markdown("""
 
 # Title
 st.title("⚡ Energy Pricing Dashboard")
+
+# Add location and circuit information
+st.markdown("""
+<div style='background-color: #f0f2f6; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;'>
+    <p style='margin: 0; font-size: 1.1rem;'>
+        📍 <strong>Location:</strong> San Francisco<br>
+        🔌 <strong>Circuit ID:</strong> 24040403
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
 st.markdown("---")
 
 # Date range selector
