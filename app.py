@@ -97,8 +97,26 @@ def fetch_and_display_data():
 
                 # Display raw data
                 st.subheader("Raw Data")
+
+                # Create a style function for the dataframe
+                def highlight_prices(df):
+                    # Get indices of 4 lowest and 4 highest prices
+                    lowest_indices = df['price'].nsmallest(4).index
+                    highest_indices = df['price'].nlargest(4).index
+
+                    # Create empty style DataFrame
+                    styles = pd.DataFrame('', index=df.index, columns=df.columns)
+
+                    # Apply background colors
+                    styles.loc[lowest_indices, 'price'] = 'background-color: #90EE90'  # light green
+                    styles.loc[highest_indices, 'price'] = 'background-color: #FFA500'  # orange
+
+                    return styles
+
+                # Apply styling and display
+                styled_df = df.style.apply(highlight_prices, axis=None)
                 st.dataframe(
-                    df,
+                    styled_df,
                     hide_index=True,
                     use_container_width=True,
                     height=(len(df) + 1) * 35 + 3  # Dynamically set height based on number of rows
