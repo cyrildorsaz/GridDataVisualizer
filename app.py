@@ -97,7 +97,12 @@ def fetch_and_display_data():
 
                 # Display raw data
                 st.subheader("Raw Data")
-                st.dataframe(df)
+                st.dataframe(
+                    df,
+                    hide_index=True,
+                    use_container_width=True,
+                    height=(len(df) + 1) * 35 + 3  # Dynamically set height based on number of rows
+                )
 
                 # Download button
                 csv = df.to_csv(index=False)
