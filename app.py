@@ -55,21 +55,20 @@ with col2:
         max_value=datetime.now().date() + timedelta(days=365)
     )
 
-# Fetch data button
-if st.button("Fetch Pricing Data"):
+def fetch_and_display_data():
     try:
         with st.spinner('Fetching data...'):
             # Convert dates to required format (YYYYMMDD)
             start_str = start_date.strftime('%Y%m%d')
             end_str = end_date.strftime('%Y%m%d')
-            
+
             # Fetch data
             data = fetch_energy_data(start_str, end_str)
-            
+
             if data:
                 # Process the data
                 df = process_pricing_data(data)
-                
+
                 # Display summary statistics
                 st.subheader("Summary Statistics")
                 col1, col2, col3 = st.columns(3)
@@ -79,7 +78,7 @@ if st.button("Fetch Pricing Data"):
                     st.metric("Max Price", f"${df['price'].max():.2f}/kWh")
                 with col3:
                     st.metric("Min Price", f"${df['price'].min():.2f}/kWh")
-                
+
                 # Plot the data
                 st.subheader("Price Trends")
                 fig = px.line(
@@ -95,11 +94,11 @@ if st.button("Fetch Pricing Data"):
                     showlegend=False
                 )
                 st.plotly_chart(fig, use_container_width=True)
-                
+
                 # Display raw data
                 st.subheader("Raw Data")
                 st.dataframe(df)
-                
+
                 # Download button
                 csv = df.to_csv(index=False)
                 st.download_button(
@@ -108,9 +107,16 @@ if st.button("Fetch Pricing Data"):
                     file_name=f"energy_pricing_{start_str}_to_{end_str}.csv",
                     mime="text/csv"
                 )
-                
+
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
+
+# Fetch data automatically on page load
+fetch_and_display_data()
+
+# Manual refresh button
+if st.button("Refresh Data"):
+    fetch_and_display_data()
 
 # Footer
 st.markdown("---")
