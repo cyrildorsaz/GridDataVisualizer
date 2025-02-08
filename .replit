@@ -4,7 +4,8 @@ modules = ["python-3.11"]
 channel = "stable-24_05"
 
 [deployment]
-deploymentTarget = "autoscale"
+deploymentTarget = "static"
+publicDir = "/index.html"
 run = ["sh", "-c", "streamlit run app.py"]
 
 [workflows]
