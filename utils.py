@@ -43,58 +43,28 @@ def process_pricing_data(data):
         pandas.DataFrame: Processed data
     """
     try:
-        # Debug print to see the structure of the data
-        print("Raw API Response:", json.dumps(data, indent=2))
-
         # Extract pricing data
         pricing_data = []
 
-        # Check if data is in the expected format
-        if not isinstance(data, dict):
-            raise ValueError("API response is not in the expected format")
+        # Navigate through the nested structure
+        for data_item in data.get('data', []):
+            price_details = data_item.get('priceDetails', [])
 
-        # Get the data array, which might be nested
-        data_array = data.get('data', [])
-        if not data_array:
-            raise ValueError("No pricing data found in the API response")
+            for detail in price_details:
+                datetime_str = detail.get('startIntervalTimeStamp')
+                price = detail.get('intervalPrice')
 
-        for item in data_array:
-            # Handle different possible datetime field names
-            datetime_str = None
-            for field in ['datetime', 'date', 'timestamp']:
-                if field in item:
-                    datetime_str = item[field]
-                    break
-
-            price = item.get('price')
-
-            if datetime_str and price is not None:
-                try:
-                    # Try different datetime formats
-                    dt = None
-                    formats_to_try = [
-                        '%Y-%m-%d %H:%M:%S',
-                        '%Y-%m-%dT%H:%M:%S',
-                        '%Y%m%d%H%M%S'
-                    ]
-
-                    for fmt in formats_to_try:
-                        try:
-                            dt = datetime.strptime(datetime_str, fmt)
-                            break
-                        except ValueError:
-                            continue
-
-                    if dt is None:
-                        raise ValueError(f"Could not parse datetime: {datetime_str}")
-
-                    pricing_data.append({
-                        'datetime': dt,
-                        'price': float(price)
-                    })
-                except ValueError as e:
-                    print(f"Warning: Skipping record due to datetime parsing error: {str(e)}")
-                    continue
+                if datetime_str and price is not None:
+                    try:
+                        # Parse datetime (format: '2025-02-08T00:00:00-0800')
+                        dt = datetime.strptime(datetime_str.split('-0800')[0], '%Y-%m-%dT%H:%M:%S')
+                        pricing_data.append({
+                            'datetime': dt,
+                            'price': float(price)
+                        })
+                    except ValueError as e:
+                        print(f"Warning: Skipping record due to datetime parsing error: {str(e)}")
+                        continue
 
         if not pricing_data:
             raise ValueError("No valid pricing data records found after processing")
@@ -109,5 +79,5 @@ def process_pricing_data(data):
 
     except Exception as e:
         print(f"Error processing data: {str(e)}")
-        print("Data received:", data)
+        print("Data received:", json.dumps(data, indent=2))
         raise Exception(f"Failed to process data: {str(e)}")
