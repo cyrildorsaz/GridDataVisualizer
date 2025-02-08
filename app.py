@@ -43,16 +43,13 @@ col1, col2 = st.columns(2)
 with col1:
     start_date = st.date_input(
         "Start Date",
-        datetime.now().date(),
-        min_value=datetime.now().date() - timedelta(days=365),
-        max_value=datetime.now().date()
+        datetime.now().date()
     )
 with col2:
     end_date = st.date_input(
         "End Date",
         datetime.now().date(),
-        min_value=start_date,
-        max_value=datetime.now().date()
+        min_value=start_date  # Only keep this constraint to ensure end_date isn't before start_date
     )
 
 def fetch_and_display_data():
